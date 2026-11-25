@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INSY SW10 — Übungsblatt</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
+  --tx:#e6edf3; --dim:#9aa7b4; --blue:#58a6ff; --green:#3fb950;
+  --amber:#e3b341; --red:#f85149; --purple:#bc8cff; --cyan:#39c5cf;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f6f8fa; --panel:#ffffff; --panel2:#f0f3f6; --line:#d6dde5;
+    --tx:#1f2328; --dim:#5a6672; --blue:#0a66c2; --green:#1a7f37;
+    --amber:#9a6700; --red:#cf222e; --purple:#8250df; --cyan:#0b7285;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:70px}
+body{margin:0; background:var(--bg); color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65; font-size:16px}
+.wrap{max-width:900px; margin:0 auto; padding:0 16px 80px}
+
+nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 88%, transparent); border-bottom:1px solid var(--line)}
+.navin{max-width:900px; margin:0 auto; padding:10px 16px; display:flex; gap:6px; overflow-x:auto}
+.navin::-webkit-scrollbar{height:0}
+nav a{color:var(--dim); text-decoration:none; font-size:13px; white-space:nowrap;
+  padding:6px 11px; border-radius:7px; border:1px solid transparent}
+nav a:hover{color:var(--tx); background:var(--panel2); border-color:var(--line)}
+
+header{padding:48px 0 28px; border-bottom:1px solid var(--line); margin-bottom:30px}
+h1{font-size:clamp(1.7rem,4.5vw,2.4rem); margin:0 0 10px; letter-spacing:-.02em}
+.sub{color:var(--dim); margin:0; font-size:1.02rem}
+
+section{margin:0 0 46px; scroll-margin-top:70px}
+h2{font-size:1.35rem; margin:0 0 6px; display:flex; align-items:center; gap:10px}
+h2 .num{font-family:var(--mono); font-size:.78rem; color:var(--bg);
+  background:var(--blue); border-radius:6px; padding:3px 8px; font-weight:700}
+.lead{color:var(--dim); margin:0 0 20px; font-size:.95rem}
+
+/* ---- Aufgaben-Karte ---- */
+.task{background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  padding:20px 22px; margin:18px 0}
+.task .head{display:flex; align-items:baseline; gap:10px; margin-bottom:4px; flex-wrap:wrap}
+.task .id{font-family:var(--mono); font-size:.75rem; color:var(--bg); background:var(--green);
+  padding:2px 8px; border-radius:5px; font-weight:700}
+.task h3{font-size:1.05rem; margin:0; flex:1}
+.task .file{font-family:var(--mono); font-size:.8rem; color:var(--cyan)}
+.task ul{margin:12px 0 0; padding-left:20px}
+.task li{margin:6px 0; font-size:.94rem}
+.task li ul{margin:4px 0}
+.task li li{font-size:.88rem; color:var(--dim)}
+.out{background:var(--panel2); border:1px solid var(--line); border-radius:8px;
+  padding:12px 14px; margin:14px 0 0}
+.out .cap{font-size:.72rem; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--dim); margin-bottom:6px}
+.out pre{margin:0; background:none; border:none; padding:0}
+
+details{margin-top:12px; border-top:1px solid var(--line); padding-top:12px}
+details summary{cursor:pointer; font-size:.88rem; font-weight:600; color:var(--amber);
+  list-style:none; user-select:none; padding:4px 0}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸"; display:inline-block; width:1.1em}
+details[open] summary::before{content:"▾"}
+details.sol summary{color:var(--green)}
+details > *:not(summary){margin-top:10px}
+details p{font-size:.9rem; margin:8px 0}
+details ul{font-size:.9rem}
+
+code{font-family:var(--mono); font-size:.88em; background:var(--panel2);
+  padding:2px 6px; border-radius:5px; color:var(--cyan)}
+pre{background:var(--panel2); border:1px solid var(--line); border-radius:9px;
+  padding:13px 15px; overflow-x:auto; margin:10px 0}
+pre code{background:none; padding:0; color:var(--tx); font-size:.84rem; line-height:1.6}
+.c-com{color:var(--dim)} .c-kw{color:var(--purple)} .c-str{color:var(--amber)}
+.c-var{color:var(--red)} .c-fn{color:var(--blue)}
+
+.key{background:var(--panel2); border-left:4px solid var(--amber);
+  border-radius:0 9px 9px 0; padding:12px 16px; margin:14px 0; font-size:.9rem}
+.key b{color:var(--amber)}
+.key.info{border-left-color:var(--blue)} .key.info b{color:var(--blue)}
+.key.bad{border-left-color:var(--red)} .key.bad b{color:var(--red)}
+
+.intro{background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  padding:18px 22px; margin-bottom:34px}
+.intro p{margin:8px 0; font-size:.93rem}
+.intro p:first-child{margin-top:0}
+.intro p:last-child{margin-bottom:0}
+footer{color:var(--dim); font-size:.85rem; text-align:center; padding-top:30px;
+  border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<nav><div class="navin">
+  <a href="#t1">1 · Grundlagen</a>
+  <a href="#t2">2 · Verzweigungen</a>
+  <a href="#t3">3 · Schleifen</a>
+  <a href="#t4">4 · Funktionen</a>
+  <a href="#t5">5 · Container</a>
+  <a href="#t6">6 · Daten &amp; Netz</a>
+</div></nav>
+
+<div class="wrap">
+
+<header>
+  <h1>INSY SW10 — Übungsblatt</h1>
+  <p class="sub">18 Aufgaben im Stil der Originalübung. Gleiche Schwierigkeit, andere Inhalte.</p>
+</header>
+
+<div class="intro">
+  <p><b>So arbeitest du damit:</b> Aufgabe lesen, selber versuchen. Erst wenn du wirklich hängst, den <b style="color:var(--amber)">Tipp</b> aufklappen. Die <b style="color:var(--green)">Lösung</b> ist zum Vergleichen danach — nicht zum Abschreiben.</p>
+  <p>Alles läuft auf deiner Switch-Engine-VM. Lege dir einen Ordner an: <code>mkdir ~/uebung2 &amp;&amp; cd ~/uebung2</code></p>
+  <p style="color:var(--dim)">Es gibt bei fast jeder Aufgabe mehrere richtige Lösungen. Wenn deine anders aussieht und trotzdem das Richtige tut, ist sie richtig.</p>
+</div>
+
+<!-- ======================= TEIL 1 ======================= -->
+<section id="t1">
+<h2><span class="num">01</span> Erste Scripts und Variablen</h2>
+<p class="lead">Shebang, Variablen, Command Substitution, interaktive Eingabe.</p>
+
+<!-- A1 -->
+<div class="task">
+  <div class="head"><span class="id">A1</span><h3>System-Übersicht</h3><span class="file">sysinfo.sh</span></div>
+  <ul>
+    <li>Das Script gibt vier Informationen über das System aus, jeweils mit Beschriftung:
+      <ul>
+        <li>den Hostnamen</li>
+        <li>den aktuell angemeldeten Benutzer</li>
+        <li>das heutige Datum im Format <code>21.11.2026</code></li>
+        <li>wie lange das System schon läuft</li>
+      </ul>
+    </li>
+    <li>Hostname, Datum und Laufzeit werden vorher in Variablen gespeichert</li>
+    <li>Der Benutzer wird über eine bereits existierende Umgebungsvariable geholt</li>
+    <li>Das Script heisst <code>sysinfo.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>Hostname: ivan-sw04-instance
+Benutzer: debian
+Datum:    21.11.2026
+Laufzeit: up 3 hours, 12 minutes</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Drei Befehle, die du brauchst: <code>hostname</code>, <code>date</code> und <code>uptime</code>. Probier sie zuerst einzeln im Terminal aus.</p>
+    <p>Für das Datumsformat: <code>date --help</code> zeigt die Platzhalter. Du brauchst Tag, Monat, Jahr, getrennt durch Punkte.</p>
+    <p>Für die Laufzeit hat <code>uptime</code> einen Schalter, der die Ausgabe auf „pretty" kürzt.</p>
+    <p>Den Benutzer musst du nicht ermitteln — die Variable gibt es schon, du hast sie bei <code>env-vars.sh</code> benutzt.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+HOST=$(hostname)
+DATUM=$(date +%d.%m.%Y)
+LAUFZEIT=$(uptime -p)
+
+<span class="c-fn">echo</span> <span class="c-str">"Hostname: <span class="c-var">$HOST</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Benutzer: <span class="c-var">$USER</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Datum:    <span class="c-var">$DATUM</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Laufzeit: <span class="c-var">$LAUFZEIT</span>"</span>
+</code></pre>
+    <p class="key"><b>Merke:</b> <code>HOST=hostname</code> würde die acht Buchstaben speichern. Nur <code>$( )</code> führt den Befehl aus und setzt dessen <b>Ausgabe</b> ein.</p>
+  </details>
+</div>
+
+<!-- A2 -->
+<div class="task">
+  <div class="head"><span class="id">A2</span><h3>Altersrechner</h3><span class="file">age.sh</span></div>
+  <ul>
+    <li>Das Script fragt interaktiv zwei Dinge ab:
+      <ul>
+        <li>den Namen des Benutzers</li>
+        <li>sein Geburtsjahr</li>
+      </ul>
+    </li>
+    <li>Aus dem aktuellen Jahr und dem Geburtsjahr wird das Alter berechnet</li>
+    <li>Ausgegeben wird ein Satz mit Name und Alter</li>
+    <li>Das Script heisst <code>age.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>Wie heisst du? Ivan
+Geburtsjahr? 2002
+Hallo Ivan, du wirst dieses Jahr 24.</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Abfragen geht mit <code>read -p</code> — der Text in Anführungszeichen, danach der Variablenname <b>ohne</b> <code>$</code>.</p>
+    <p>Das aktuelle Jahr bekommst du wieder mit <code>date</code> und dem passenden Platzhalter.</p>
+    <p>Rechnen geht in der Bash nicht einfach mit <code>-</code>. Du brauchst doppelte runde Klammern.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-kw">read</span> -p <span class="c-str">"Wie heisst du? "</span> NAME
+<span class="c-kw">read</span> -p <span class="c-str">"Geburtsjahr? "</span> JAHR
+
+JETZT=$(date +%Y)
+ALTER=$(( JETZT - JAHR ))
+
+<span class="c-fn">echo</span> <span class="c-str">"Hallo <span class="c-var">$NAME</span>, du wirst dieses Jahr <span class="c-var">$ALTER</span>."</span>
+</code></pre>
+    <p class="key info"><b>Drei Klammerarten, drei Zwecke:</b> <code>$( )</code> führt einen Befehl aus, <code>$(( ))</code> rechnet, <code>[ ]</code> prüft eine Bedingung.</p>
+  </details>
+</div>
+
+<!-- A3 -->
+<div class="task">
+  <div class="head"><span class="id">A3</span><h3>Kopieren mit Parametern</h3><span class="file">copyfile.sh</span></div>
+  <ul>
+    <li>Folgende Parameter werden dem Benutzer mit kurzer Beschreibung ausgegeben:
+      <ul>
+        <li><code>$0</code> – Script-Name</li>
+        <li><code>$#</code> – Anzahl der Parameter</li>
+        <li><code>$1</code> – Quelldatei</li>
+        <li><code>$2</code> – Zieldatei</li>
+        <li><code>$*</code> – alle Parameter zusammen</li>
+      </ul>
+    </li>
+    <li>Parameter Nr. 1 ist die Quelldatei, Parameter Nr. 2 die Zieldatei</li>
+    <li>Danach kopiert das Script die Quelle auf das Ziel</li>
+    <li>Das Script heisst <code>copyfile.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>$ ./copyfile.sh sysinfo.sh backup.sh
+Script-Name: ./copyfile.sh
+Anzahl Parameter: 2
+Quelle: sysinfo.sh
+Ziel: backup.sh
+Alle Parameter: sysinfo.sh backup.sh
+=== Kopiere ===
+Fertig.</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Hier wird <b>nichts</b> gefragt — kein <code>read</code>. Die Werte gibt der Benutzer beim Start mit, hinter dem Script-Namen.</p>
+    <p><code>$0</code>, <code>$#</code> und <code>$*</code> füllt die Bash automatisch. Du kannst sie nur lesen, nicht setzen.</p>
+    <p>Beim Kopieren die Variablen in Anführungszeichen setzen — Dateinamen können Leerzeichen enthalten.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-fn">echo</span> <span class="c-str">"Script-Name: <span class="c-var">$0</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Anzahl Parameter: <span class="c-var">$#</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Quelle: <span class="c-var">$1</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Ziel: <span class="c-var">$2</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Alle Parameter: <span class="c-var">$*</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"=== Kopiere ==="</span>
+
+cp <span class="c-str">"<span class="c-var">$1</span>"</span> <span class="c-str">"<span class="c-var">$2</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">"Fertig."</span>
+</code></pre>
+    <p class="key bad"><b>Typische Falle:</b> Bei <code>$#</code> kommt eine <b>Anzahl</b> heraus (hier 2), bei <code>$1</code> ein <b>Inhalt</b>. Wer die beiden verwechselt, kopiert plötzlich eine Datei namens „2".</p>
+  </details>
+</div>
+</section>
+
+<!-- ======================= TEIL 2 ======================= -->
+<section id="t2">
+<h2><span class="num">02</span> Verzweigungen und Test-Bedingungen</h2>
+<p class="lead"><code>if</code>, Exit-Codes, Dateitests, <code>case</code>.</p>
+
+<!-- A4 -->
+<div class="task">
+  <div class="head"><span class="id">A4</span><h3>Plattenplatz-Warnung</h3><span class="file">disk-alert.sh</span></div>
+  <ul>
+    <li>Als Parameter Nr. 1 nimmt das Script einen Schwellenwert in Prozent entgegen</li>
+    <li>Wird kein Parameter übergeben, gibt das Script eine Fehlermeldung aus und beendet sich
+      <ul><li>Nutzen Sie die Variable <code>$#</code> um die Anzahl der Parameter abzufragen</li></ul>
+    </li>
+    <li>Das Script ermittelt die aktuelle Belegung des Dateisystems <code>/</code> in Prozent und gibt sie aus</li>
+    <li>Liegt die Belegung über dem Schwellenwert, wird eine Warnung ausgegeben, sonst eine Entwarnung</li>
+    <li>Das Script heisst <code>disk-alert.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>$ ./disk-alert.sh 80
+Belegung von /: 14%
+Alles im grünen Bereich.
+
+$ ./disk-alert.sh
+[Error] Bitte einen Schwellenwert in Prozent angeben
+Benutzung: ./disk-alert.sh &lt;zahl&gt;</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Die Belegung liefert <code>df</code>. Tipp sie zuerst einzeln ein: <code>df -h /</code>. Du bekommst zwei Zeilen und mehrere Spalten — du brauchst genau eine Zahl.</p>
+    <p>Die Kopfzeile wegschneiden: <code>tail -n 1</code>. Die richtige Spalte holen: <code>awk '{print $5}'</code>. Das Prozentzeichen entfernen: <code>tr -d '%'</code>. Alles mit Pipes aneinanderhängen.</p>
+    <p>Das Prozentzeichen muss weg, weil <code>[ ]</code> nur mit <b>Zahlen</b> vergleichen kann — <code>14%</code> ist für die Bash Text.</p>
+    <p>Für „grösser als" schau in <code>man test</code>.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-kw">if</span> [ <span class="c-var">$#</span> -eq 0 ]; <span class="c-kw">then</span>
+    <span class="c-fn">echo</span> <span class="c-str">"[Error] Bitte einen Schwellenwert in Prozent angeben"</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Benutzung: ./disk-alert.sh &lt;zahl&gt;"</span>
+    <span class="c-kw">exit</span> 1
+<span class="c-kw">fi</span>
+
+GRENZE=<span class="c-var">$1</span>
+BELEGT=$(df -h / | tail -n 1 | awk <span class="c-str">'{print $5}'</span> | tr -d <span class="c-str">'%'</span>)
+
+<span class="c-fn">echo</span> <span class="c-str">"Belegung von /: <span class="c-var">${BELEGT}</span>%"</span>
+
+<span class="c-kw">if</span> [ <span class="c-str">"<span class="c-var">$BELEGT</span>"</span> -gt <span class="c-str">"<span class="c-var">$GRENZE</span>"</span> ]; <span class="c-kw">then</span>
+    <span class="c-fn">echo</span> <span class="c-str">"WARNUNG: Belegung über <span class="c-var">${GRENZE}</span>%!"</span>
+<span class="c-kw">else</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Alles im grünen Bereich."</span>
+<span class="c-kw">fi</span>
+</code></pre>
+    <p class="key"><b>Die Pipe-Kette ist der Kern:</b> alles holen → richtige Zeile → richtige Spalte → Zeichen weg. Übrig bleibt eine nackte Zahl, mit der man vergleichen kann. Genau das Muster aus dem Monitoring-Script.</p>
+  </details>
+</div>
+
+<!-- A5 -->
+<div class="task">
+  <div class="head"><span class="id">A5</span><h3>Ordner prüfen</h3><span class="file">dir-check.sh</span></div>
+  <ul>
+    <li>Ordner zur Prüfung als Parameter Nr. 1 übergeben, ansonsten Fehlermeldung ausgeben</li>
+    <li>Prüfen ob es sich wirklich um ein Verzeichnis handelt</li>
+    <li>Falls ja:
+      <ul>
+        <li>Prüfen ob lesbar und Ergebnis ausgeben</li>
+        <li>Prüfen ob beschreibbar und Ergebnis ausgeben</li>
+        <li>Anzahl der enthaltenen Einträge ausgeben</li>
+      </ul>
+    </li>
+    <li>Das Script heisst <code>dir-check.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>$ ./dir-check.sh /etc
+Verzeichnis existiert.
+Verzeichnis lesbar.
+Verzeichnis nicht beschreibbar.
+Enthält 142 Einträge.</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Für „ist ein Verzeichnis" gibt es ein eigenes Kürzel — <code>-e</code> wäre zu unscharf, das trifft auch auf Dateien zu. Schau in <code>man test</code> bei den Dateitests.</p>
+    <p>Die drei Prüfungen gehören <b>in</b> den Verzeichnis-Block hinein („Falls ja"), sonst melden sie Unsinn, wenn der Ordner gar nicht existiert.</p>
+    <p>Einträge zählen: <code>ls -1 ordner | wc -l</code>. Das <code>-1</code> ist eine Eins und erzwingt eine Zeile pro Eintrag.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-kw">if</span> [ <span class="c-var">$#</span> -eq 1 ]; <span class="c-kw">then</span>
+
+    <span class="c-kw">if</span> [ -d <span class="c-str">"<span class="c-var">$1</span>"</span> ]; <span class="c-kw">then</span>
+        <span class="c-fn">echo</span> <span class="c-str">"Verzeichnis existiert."</span>
+
+        <span class="c-kw">if</span> [ -r <span class="c-str">"<span class="c-var">$1</span>"</span> ]; <span class="c-kw">then</span>
+            <span class="c-fn">echo</span> <span class="c-str">"Verzeichnis lesbar."</span>
+        <span class="c-kw">else</span>
+            <span class="c-fn">echo</span> <span class="c-str">"Verzeichnis nicht lesbar."</span>
+        <span class="c-kw">fi</span>
+
+        <span class="c-kw">if</span> [ -w <span class="c-str">"<span class="c-var">$1</span>"</span> ]; <span class="c-kw">then</span>
+            <span class="c-fn">echo</span> <span class="c-str">"Verzeichnis beschreibbar."</span>
+        <span class="c-kw">else</span>
+            <span class="c-fn">echo</span> <span class="c-str">"Verzeichnis nicht beschreibbar."</span>
+        <span class="c-kw">fi</span>
+
+        ANZAHL=$(ls -1 <span class="c-str">"<span class="c-var">$1</span>"</span> | wc -l)
+        <span class="c-fn">echo</span> <span class="c-str">"Enthält <span class="c-var">$ANZAHL</span> Einträge."</span>
+
+    <span class="c-kw">else</span>
+        <span class="c-fn">echo</span> <span class="c-str">"Das ist kein Verzeichnis."</span>
+    <span class="c-kw">fi</span>
+
+<span class="c-kw">else</span>
+    <span class="c-fn">echo</span> <span class="c-str">"[Error] Bitte genau einen Ordner angeben."</span>
+    <span class="c-kw">exit</span> 1
+<span class="c-kw">fi</span>
+</code></pre>
+    <p class="key info"><b>Dateitests im Überblick:</b> <code>-e</code> existiert · <code>-f</code> normale Datei · <code>-d</code> Verzeichnis · <code>-r</code> lesbar · <code>-w</code> beschreibbar · <code>-x</code> ausführbar. Die letzten drei sind dieselben Buchstaben wie bei <code>chmod</code>.</p>
+  </details>
+</div>
+
+<!-- A6 -->
+<div class="task">
+  <div class="head"><span class="id">A6</span><h3>Netzwerk-Menü</h3><span class="file">netmenu.sh</span></div>
+  <ul>
+    <li>Eine Menüauswahl mit Punkten und zugehöriger Zahl wird dem Benutzer ausgegeben</li>
+    <li>Interaktiv wird die Auswahl eines Menüpunkts angefordert</li>
+    <li>Folgende Menüpunkte sollen zur Verfügung stehen:
+      <ul>
+        <li>Ausgabe der IP-Adressen des Systems</li>
+        <li>Ausgabe der offenen Ports</li>
+        <li>Ausgabe des Standard-Gateways</li>
+        <li>Ein Menüpunkt zum Beenden</li>
+      </ul>
+    </li>
+    <li>Bei einer ungültigen Eingabe gibt das Script einen Fehler aus und beendet sich</li>
+    <li>Das Script heisst <code>netmenu.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>=== Netzwerk-Menü ===
+1) IP-Adressen
+2) Offene Ports
+3) Standard-Gateway
+4) Beenden
+
+Ihre Wahl (1-4): 1
+--- IP-Adressen ---
+lo    UNKNOWN  127.0.0.1/8
+ens3  UP       10.0.0.42/24</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Drei Befehle, alle vorinstalliert: <code>ip</code> für Adressen und Routen, <code>ss</code> für Ports.</p>
+    <ul>
+      <li>IP-Adressen: <code>ip</code> mit dem Unterbefehl für Adressen. Mit <code>-brief</code> wird es übersichtlich.</li>
+      <li>Offene Ports: <code>ss -tuln</code></li>
+      <li>Gateway: <code>ip route</code>, und davon die Zeile mit <code>default</code> herausfiltern</li>
+    </ul>
+    <p>Jeder Fall im <code>case</code> endet mit <code>;;</code> — das wird gerne vergessen.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-fn">echo</span> <span class="c-str">"=== Netzwerk-Menü ==="</span>
+<span class="c-fn">echo</span> <span class="c-str">"1) IP-Adressen"</span>
+<span class="c-fn">echo</span> <span class="c-str">"2) Offene Ports"</span>
+<span class="c-fn">echo</span> <span class="c-str">"3) Standard-Gateway"</span>
+<span class="c-fn">echo</span> <span class="c-str">"4) Beenden"</span>
+<span class="c-fn">echo</span> <span class="c-str">""</span>
+
+<span class="c-kw">read</span> -p <span class="c-str">"Ihre Wahl (1-4): "</span> WAHL
+
+<span class="c-kw">case</span> <span class="c-var">$WAHL</span> <span class="c-kw">in</span>
+    1)
+        <span class="c-fn">echo</span> <span class="c-str">"--- IP-Adressen ---"</span>
+        ip -brief address
+        ;;
+    2)
+        <span class="c-fn">echo</span> <span class="c-str">"--- Offene Ports ---"</span>
+        ss -tuln
+        ;;
+    3)
+        <span class="c-fn">echo</span> <span class="c-str">"--- Standard-Gateway ---"</span>
+        ip route | grep default
+        ;;
+    4)
+        <span class="c-fn">echo</span> <span class="c-str">"Beendet."</span>
+        <span class="c-kw">exit</span> 0
+        ;;
+    *)
+        <span class="c-fn">echo</span> <span class="c-str">"[Error] Ungültige Eingabe: <span class="c-var">$WAHL</span>"</span>
+        <span class="c-kw">exit</span> 1
+        ;;
+<span class="c-kw">esac</span>
+</code></pre>
+    <p class="key"><b><code>case</code> vs. <code>if</code>:</b> <code>case</code> nimmt man, wenn <b>dieselbe</b> Variable gegen mehrere Werte geprüft wird. Für mehrere verschiedene Fragen nimmt man getrennte <code>if</code>-Blöcke.</p>
+  </details>
+</div>
+</section>
+
+<!-- ======================= TEIL 3 ======================= -->
+<section id="t3">
+<h2><span class="num">03</span> Schleifen und Iteration</h2>
+<p class="lead"><code>for</code> über Dateien und Listen, <code>while</code> mit Bedingung.</p>
+
+<!-- A7 -->
+<div class="task">
+  <div class="head"><span class="id">A7</span><h3>Konfigurationsdateien prüfen</h3><span class="file">check_conf.sh</span></div>
+  <ul>
+    <li>Iteration über eine Liste von Dateien mittels <code>for</code>-Schleife
+      <ul><li>Zielverzeichnis: <code>/etc/*.conf</code></li></ul>
+    </li>
+    <li>Prüfen der Leseberechtigung für den aktuellen Benutzer</li>
+    <li>Ausgabe ob die jeweilige Datei lesbar ist oder nicht</li>
+    <li>Bei lesbaren Dateien zusätzlich die Dateigrösse ausgeben</li>
+    <li>Das Script heisst <code>check_conf.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>Benutzer: debian
+
+Prüfe Datei: /etc/adduser.conf
+  Lesbar — Grösse: 3.0K
+Prüfe Datei: /etc/ca-certificates.conf
+  Lesbar — Grösse: 6.0K
+Prüfe Datei: /etc/sudo.conf
+  Nicht lesbar
+[...]</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Die <code>for</code>-Zeile hat genau drei Teile: Variablenname, <code>in</code>, Liste. Der Name steht <b>ohne</b> <code>$</code> — du vergibst ihn ja gerade.</p>
+    <p>Das <code>*</code> im Pfad ist ein Glob: Die Bash setzt dort automatisch alle passenden Dateien ein.</p>
+    <p>Die Dateigrösse: <code>du -h datei</code> gibt Grösse und Pfad zurück. Nur die Grösse bekommst du mit <code>cut -f1</code>.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-fn">echo</span> <span class="c-str">"Benutzer: <span class="c-var">${USER}</span>"</span>
+<span class="c-fn">echo</span> <span class="c-str">""</span>
+
+<span class="c-kw">for</span> FILE <span class="c-kw">in</span> /etc/*.conf; <span class="c-kw">do</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Prüfe Datei: <span class="c-var">$FILE</span>"</span>
+
+    <span class="c-kw">if</span> [ -r <span class="c-str">"<span class="c-var">$FILE</span>"</span> ]; <span class="c-kw">then</span>
+        GROESSE=$(du -h <span class="c-str">"<span class="c-var">$FILE</span>"</span> | cut -f1)
+        <span class="c-fn">echo</span> <span class="c-str">"  Lesbar — Grösse: <span class="c-var">$GROESSE</span>"</span>
+    <span class="c-kw">else</span>
+        <span class="c-fn">echo</span> <span class="c-str">"  Nicht lesbar"</span>
+    <span class="c-kw">fi</span>
+<span class="c-kw">done</span>
+</code></pre>
+    <p class="key bad"><b>Zwei Klassiker hier:</b> In der <code>for</code>-Zeile <code>$FILE</code> statt <code>FILE</code> schreiben (gibt <code>not a valid identifier</code>), und die Prüfung verdreht als <code>[ "$FILE" -r ]</code> — bei Dateitests kommt immer <b>zuerst das Kürzel</b>.</p>
+  </details>
+</div>
+
+<!-- A8 -->
+<div class="task">
+  <div class="head"><span class="id">A8</span><h3>Ports prüfen</h3><span class="file">check_ports.sh</span></div>
+  <ul>
+    <li>Hinterlegen Sie die folgende Liste an Ports als Variable in Ihrem Script: <code>22 80 443 3306</code></li>
+    <li>Prüfen jedes Ports in der Liste mit einer <code>for</code>-Schleife
+      <ul><li><code>for</code> erlaubt das Iterieren über eine Liste von Space-separated Strings mit <code>in</code></li></ul>
+    </li>
+    <li>Ausgabe ob auf dem jeweiligen Port etwas lauscht oder nicht
+      <ul><li>Sie können dies über den Exit-Code des Kommandos <code>ss -tuln | grep -q ":&lt;port&gt; "</code> abfragen</li></ul>
+    </li>
+    <li>Das Script heisst <code>check_ports.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>Prüfe Port: 22
+  Port 22 ist offen
+Prüfe Port: 80
+  Port 80 ist offen
+Prüfe Port: 443
+  Port 443 ist geschlossen
+Prüfe Port: 3306
+  Port 3306 ist geschlossen</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Eine Variable, vier Werte: <code>PORTS="22 80 443 3306"</code>. Das ist ein einziger Text mit vier Wörtern.</p>
+    <p>In der <code>for</code>-Zeile schreibst du <code>$PORTS</code> <b>ohne</b> Anführungszeichen — mit wäre es ein einziges langes Wort und die Schleife liefe nur einmal. Das ist die eine Stelle, wo die übliche Quoting-Regel umgekehrt gilt.</p>
+    <p>Das <code>if</code> braucht hier <b>keine</b> eckigen Klammern. Nach <code>if</code> darf jeder Befehl stehen — die Bash schaut auf seinen Exit-Code. <code>grep -q</code> gibt nichts aus und liefert 0, wenn es etwas gefunden hat.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+PORTS=<span class="c-str">"22 80 443 3306"</span>
+
+<span class="c-kw">for</span> PORT <span class="c-kw">in</span> <span class="c-var">$PORTS</span>; <span class="c-kw">do</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Prüfe Port: <span class="c-var">$PORT</span>"</span>
+
+    <span class="c-kw">if</span> ss -tuln | grep -q <span class="c-str">":<span class="c-var">$PORT</span> "</span>; <span class="c-kw">then</span>
+        <span class="c-fn">echo</span> <span class="c-str">"  Port <span class="c-var">$PORT</span> ist offen"</span>
+    <span class="c-kw">else</span>
+        <span class="c-fn">echo</span> <span class="c-str">"  Port <span class="c-var">$PORT</span> ist geschlossen"</span>
+    <span class="c-kw">fi</span>
+<span class="c-kw">done</span>
+</code></pre>
+    <p class="key info"><b>Der Kern:</b> <code>[ ]</code> ist selber nur ein Programm. Darum darf nach <code>if</code> jeder Befehl stehen. <b>Exit-Code 0 = wahr</b>, alles andere = falsch. Genau wie bei <code>systemctl is-active --quiet</code>.</p>
+  </details>
+</div>
+
+<!-- A9 -->
+<div class="task">
+  <div class="head"><span class="id">A9</span><h3>Stoppuhr</h3><span class="file">timer.sh</span></div>
+  <ul>
+    <li>Das Script zählt von 1 bis zu einem Zielwert <b>hoch</b> und wartet dazwischen jeweils eine Sekunde</li>
+    <li>Der Zielwert kann als Parameter übergeben werden; ohne Parameter sind es 5 Sekunden</li>
+    <li>Die verbleibende Zeit wird in einer <code>while</code>-Schleife ausgegeben
+      <ul><li>Schauen Sie in <code>man test</code> für die Bedingung der Schleife</li></ul>
+    </li>
+    <li>Am Ende wird eine Schlussmeldung ausgegeben</li>
+    <li>Das Script heisst <code>timer.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>$ ./timer.sh 3
+Stoppuhr läuft für 3 Sekunden...
+Sekunde 1 von 3
+Sekunde 2 von 3
+Sekunde 3 von 3
+Zeit abgelaufen!</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Du brauchst zwei Variablen: den Zielwert (aus <code>$1</code>) und einen Zähler, der bei 1 startet.</p>
+    <p>Für den Standardwert gibt es eine Kurzform: <code>${1:-5}</code> heisst „nimm <code>$1</code>, und falls leer, nimm 5".</p>
+    <p>Die Bedingung lautet diesmal „kleiner oder gleich" — in <code>man test</code> steht das Kürzel dafür.</p>
+    <p>Hochzählen: <code>I=$(( I + 1 ))</code>. Und <code>sleep 1</code> nicht vergessen, sonst rauscht es durch.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+ZIEL=<span class="c-var">${1:-5}</span>
+I=1
+
+<span class="c-fn">echo</span> <span class="c-str">"Stoppuhr läuft für <span class="c-var">$ZIEL</span> Sekunden..."</span>
+
+<span class="c-kw">while</span> [ <span class="c-var">$I</span> -le <span class="c-var">$ZIEL</span> ]; <span class="c-kw">do</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Sekunde <span class="c-var">$I</span> von <span class="c-var">$ZIEL</span>"</span>
+    I=$(( I + 1 ))
+    sleep 1
+<span class="c-kw">done</span>
+
+<span class="c-fn">echo</span> <span class="c-str">"Zeit abgelaufen!"</span>
+</code></pre>
+    <p class="key bad"><b>Achtung:</b> <code>&gt;</code> und <code>&lt;</code> bedeuten in <code>[ ]</code> <b>nicht</b> grösser/kleiner, sondern Umleitung. Die Bash legt dir sonst stillschweigend eine Datei an. Für Zahlen immer <code>-lt -le -gt -ge -eq -ne</code>.</p>
+  </details>
+</div>
+</section>
+
+<!-- ======================= TEIL 4 ======================= -->
+<section id="t4">
+<h2><span class="num">04</span> Funktionen und Debugging</h2>
+<p class="lead">Eigene Befehle bauen, Werte zurückgeben, Fehler finden.</p>
+
+<!-- A10 -->
+<div class="task">
+  <div class="head"><span class="id">A10</span><h3>Temperatur-Umrechner</h3><span class="file">convert.sh</span></div>
+  <ul>
+    <li>Der Umrechner soll zwischen Celsius und Fahrenheit umrechnen</li>
+    <li>Das Script nimmt die folgenden Parameter entgegen:
+      <ul>
+        <li><code>$1</code> – der Zahlenwert</li>
+        <li><code>$2</code> – die Richtung als String (<code>CTOF</code> oder <code>FTOC</code>)</li>
+      </ul>
+    </li>
+    <li>Das Script soll zwei Funktionen beinhalten:
+      <ul>
+        <li><code>c_to_f</code> bekommt eine Zahl als Parameter und gibt Grad Fahrenheit zurück</li>
+        <li><code>f_to_c</code> bekommt eine Zahl als Parameter und gibt Grad Celsius zurück</li>
+      </ul>
+    </li>
+    <li>Werden weniger als zwei Parameter übergeben, gibt das Script eine Fehlermeldung aus</li>
+    <li>Entscheide via <code>case</code> welche Funktion ausgeführt wird</li>
+    <li>Das Script heisst <code>convert.sh</code></li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>$ ./convert.sh 20 CTOF
+68 Grad Fahrenheit
+
+$ ./convert.sh 68 FTOC
+20 Grad Celsius</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Die Formeln: <code>F = C * 9 / 5 + 32</code> und <code>C = (F - 32) * 5 / 9</code>. Die Bash rechnet nur mit ganzen Zahlen — das ist hier in Ordnung.</p>
+    <p><b>Wichtig:</b> Innerhalb einer Funktion ist <code>$1</code> der <b>erste Parameter der Funktion</b>, nicht der des Scripts. Du gibst ihr nur eine Zahl mit, also heisst die drinnen <code>$1</code>.</p>
+    <p>Die Funktionen <b>rechnen nur</b> — kein <code>if</code>, kein <code>case</code> darin. Die Entscheidung trifft das <code>case</code> draussen.</p>
+    <p><code>return</code> taugt nicht für Ergebnisse, nur für Exit-Codes. Werte kommen mit <code>echo</code> heraus.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+<span class="c-com"># Funktion: Celsius nach Fahrenheit</span>
+<span class="c-fn">c_to_f</span>() {
+    <span class="c-fn">echo</span> $(( <span class="c-var">$1</span> * 9 / 5 + 32 ))
+}
+
+<span class="c-com"># Funktion: Fahrenheit nach Celsius</span>
+<span class="c-fn">f_to_c</span>() {
+    <span class="c-fn">echo</span> $(( (<span class="c-var">$1</span> - 32) * 5 / 9 ))
+}
+
+<span class="c-com"># Parameterprüfung</span>
+<span class="c-kw">if</span> [ <span class="c-str">"<span class="c-var">$#</span>"</span> -lt 2 ]; <span class="c-kw">then</span>
+    <span class="c-fn">echo</span> <span class="c-str">"[Error] Zu wenige Parameter erhalten"</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Benutzung: ./convert.sh &lt;zahl&gt; &lt;CTOF|FTOC&gt;"</span>
+    <span class="c-kw">exit</span> 1
+<span class="c-kw">fi</span>
+
+<span class="c-kw">case</span> <span class="c-str">"<span class="c-var">$2</span>"</span> <span class="c-kw">in</span>
+    CTOF)
+        <span class="c-fn">echo</span> <span class="c-str">"$(c_to_f <span class="c-var">$1</span>) Grad Fahrenheit"</span>
+        ;;
+    FTOC)
+        <span class="c-fn">echo</span> <span class="c-str">"$(f_to_c <span class="c-var">$1</span>) Grad Celsius"</span>
+        ;;
+    *)
+        <span class="c-fn">echo</span> <span class="c-str">"[Error] Ungültige Richtung: <span class="c-var">$2</span>"</span>
+        <span class="c-fn">echo</span> <span class="c-str">"Erlaubt: CTOF oder FTOC"</span>
+        <span class="c-kw">exit</span> 1
+        ;;
+<span class="c-kw">esac</span>
+</code></pre>
+    <p class="key"><b>Zwei getrennte Welten:</b> Bei <code>./convert.sh 20 CTOF</code> ist draussen <code>$2</code> = <code>CTOF</code>. Beim Aufruf <code>c_to_f 20</code> gibt es drinnen nur <code>$1</code> = 20 — ein <code>$2</code> existiert dort gar nicht. Die Funktion ist ein eigenes kleines Script.</p>
+    <p class="key info"><b>Zur Erinnerung:</b> Die Definitionen müssen <b>vor</b> dem Aufruf stehen. Die Bash liest von oben nach unten.</p>
+  </details>
+</div>
+
+<!-- A11 -->
+<div class="task">
+  <div class="head"><span class="id">A11</span><h3>Fehlersuche</h3><span class="file">broken.sh</span></div>
+  <ul>
+    <li>Legen Sie das folgende Script als <code>broken.sh</code> an. Es enthält <b>vier</b> Fehler.</li>
+    <li>Finden Sie die Fehler — zuerst durch Nachdenken, dann mit <code>bash -x broken.sh google.ch</code></li>
+    <li>Korrigieren Sie das Script, bis es funktioniert</li>
+  </ul>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+ANZAHL = 3
+ZIEL=<span class="c-var">$2</span>
+
+<span class="c-kw">if</span> [<span class="c-var">$#</span> -eq 0]
+    <span class="c-fn">echo</span> <span class="c-str">"Kein Ziel angegeben"</span>
+    <span class="c-kw">exit</span> 1
+<span class="c-kw">fi</span>
+
+ping -c <span class="c-var">$ZIEL</span> <span class="c-var">$ANZAHL</span>
+</code></pre>
+
+  <details><summary>Tipp</summary>
+    <p>Arbeite die Fehlermeldungen von oben nach unten ab — die Bash meldet immer nur den ersten.</p>
+    <p>Drei der vier Fehler hast du in dieser Übung selber schon mal gemacht. Achte auf: Leerzeichen, <code>$</code>-Zeichen, fehlende Schlüsselwörter und die Reihenfolge von Argumenten.</p>
+    <p>Der vierte Fehler erzeugt <b>keine</b> Fehlermeldung — das Script läuft, macht aber das Falsche. Diese Sorte findest du nur mit <code>bash -x</code>.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+    <p><b>Die vier Fehler:</b></p>
+    <ul>
+      <li><code>ANZAHL = 3</code> → beim Zuweisen dürfen <b>keine Leerzeichen</b> ums <code>=</code> stehen. Die Bash hält <code>ANZAHL</code> sonst für einen Befehl.</li>
+      <li><code>ZIEL=$2</code> → das Ziel ist der <b>erste</b> Parameter, also <code>$1</code>. Das ist der stille Fehler: keine Meldung, aber <code>$2</code> ist leer.</li>
+      <li><code>if [$# -eq 0]</code> → Leerzeichen nach <code>[</code> und vor <code>]</code> fehlen, und das <code>; then</code> am Zeilenende fehlt ganz.</li>
+      <li><code>ping -c $ZIEL $ANZAHL</code> → vertauscht. <code>-c</code> will die Anzahl <b>direkt</b> dahinter, das Ziel kommt zuletzt.</li>
+    </ul>
+<pre><code><span class="c-com">#!/bin/bash</span>
+
+ANZAHL=3
+ZIEL=<span class="c-var">$1</span>
+
+<span class="c-kw">if</span> [ <span class="c-var">$#</span> -eq 0 ]; <span class="c-kw">then</span>
+    <span class="c-fn">echo</span> <span class="c-str">"Kein Ziel angegeben"</span>
+    <span class="c-kw">exit</span> 1
+<span class="c-kw">fi</span>
+
+ping -c <span class="c-var">$ANZAHL</span> <span class="c-var">$ZIEL</span>
+</code></pre>
+    <p class="key"><b>Warum <code>bash -x</code> hier gewinnt:</b> Es zeigt dir <code>+ ping -c google.ch 3</code> mit <b>eingesetzten</b> Werten. Da springt die Vertauschung sofort ins Auge — und dass <code>$ZIEL</code> leer war, siehst du an <code>+ ZIEL=</code>.</p>
+  </details>
+</div>
+</section>
+<!-- ======================= TEIL 5 ======================= -->
+<section id="t5">
+<h2><span class="num">05</span> Container und eigene Images</h2>
+<p class="lead">CLI-Grundlagen, detached mode, Port-Mapping, Dockerfile.</p>
+
+<!-- A12 -->
+<div class="task">
+  <div class="head"><span class="id">A12</span><h3>Erster Apache-Container</h3></div>
+  <ul>
+    <li>Pullen (noch nicht starten) Sie das <code>httpd</code> Container-Image mit dem Tag <code>2.4</code> vom Docker Hub</li>
+    <li>Starten Sie einen Container aus dem Image, benennen Sie ihn <code>apache</code>
+      <ul>
+        <li>Listen Sie alle laufenden Container auf</li>
+        <li>Prüfen Sie die Logs des Containers</li>
+        <li>Öffnen Sie eine Shell im laufenden Container und prüfen Sie die Apache-Version via <code>httpd -v</code></li>
+        <li>Schauen Sie im Container nach, welcher Kernel läuft (<code>uname -r</code>) und vergleichen Sie mit dem Host</li>
+      </ul>
+    </li>
+    <li>Stoppen Sie den Container und listen Sie alle Container inkl. der gestoppten auf</li>
+    <li>Entfernen Sie den gestoppten Container und listen Sie alle Images auf</li>
+  </ul>
+
+  <details><summary>Tipp</summary>
+    <p>Starte gleich mit <code>-d --name apache</code>, dann bleibt dein Terminal frei und du musst keinen Zufallsnamen ablesen.</p>
+    <p>Für den Container-Namen gilt: <code>apache</code> ist dein Container, <code>httpd:2.4</code> das Image. In <code>docker logs</code> und <code>docker exec</code> gehört der <b>Container</b> hin.</p>
+    <p><code>docker ps</code> zeigt nur laufende. Für die gestoppten brauchst du einen Schalter.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>sudo docker pull httpd:2.4
+
+sudo docker run -d --name apache httpd:2.4
+sudo docker ps
+sudo docker logs apache
+
+sudo docker exec -it apache /bin/bash
+<span class="c-com">#   im Container:</span>
+httpd -v
+uname -r
+<span class="c-kw">exit</span>
+
+sudo docker stop apache
+sudo docker ps -a
+sudo docker rm apache
+sudo docker images
+</code></pre>
+    <p class="key info"><b>Was du am Kernel siehst:</b> <code>uname -r</code> liefert drinnen genau denselben Kernel wie auf der VM. Der Container bringt nur das Userland mit — das ist der Unterschied zu einer VM.</p>
+  </details>
+</div>
+
+<!-- A13 -->
+<div class="task">
+  <div class="head"><span class="id">A13</span><h3>Detached mit Port-Mapping</h3></div>
+  <ul>
+    <li>Starten Sie einen Container mit <code>httpd</code> im detached mode</li>
+    <li>Mappen Sie den Port 80 des Containers auf Port <code>9090</code> des Host-Systems</li>
+    <li>Prüfen Sie mit <code>curl</code>, ob die Apache-Startseite erreichbar ist</li>
+    <li>Schauen Sie in <code>docker ps</code> die Spalte PORTS an und erklären Sie, was dort steht</li>
+    <li>Räumen Sie danach auf: stoppen und entfernen</li>
+  </ul>
+  <div class="out"><div class="cap">Erwarteter Output</div><pre><code>$ curl http://localhost:9090
+&lt;html&gt;&lt;body&gt;&lt;h1&gt;It works!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</code></pre></div>
+
+  <details><summary>Tipp</summary>
+    <p>Die Reihenfolge beim Mapping ist <code>-p HOST:CONTAINER</code>. Links der Port, den du <b>von aussen</b> ansprichst, rechts der, auf dem der Dienst <b>intern</b> lauscht.</p>
+    <p>Apache lauscht im Container auf 80 — das steht fest. Welcher Port aussen steht, bestimmst du.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>sudo docker run -d --name web -p 9090:80 httpd:2.4
+
+curl http://localhost:9090
+sudo docker ps
+
+sudo docker rm -f web
+</code></pre>
+    <p>In <code>docker ps</code> steht dann <code>0.0.0.0:9090-&gt;80/tcp</code>: Alles, was auf dem Host an Port 9090 ankommt, wird an Port 80 im Container weitergereicht.</p>
+    <p class="key bad"><b>Häufigster Fehler:</b> <code>-p 80:9090</code> geschrieben. Dann lauscht der Host auf 80 und leitet auf 9090 im Container — wo nichts ist. <code>curl</code> läuft ins Leere.</p>
+  </details>
+</div>
+
+<!-- A14 -->
+<div class="task">
+  <div class="head"><span class="id">A14</span><h3>Eigenes Image bauen</h3><span class="file">Dockerfile</span></div>
+  <ul>
+    <li>Erstellen Sie ein neues leeres Verzeichnis als Arbeitsverzeichnis für den Container-Build</li>
+    <li>Legen Sie darin eine eigene <code>index.html</code> mit beliebigem Inhalt an</li>
+    <li>Schreiben Sie ein <code>Dockerfile</code> mit folgenden Anforderungen:
+      <ul>
+        <li>Basis-Image ist <code>httpd:2.4</code></li>
+        <li>Ihre <code>index.html</code> wird an die richtige Stelle im Image kopiert
+          <ul><li>Der Pfad beim <code>httpd</code>-Image ist <code>/usr/local/apache2/htdocs/</code></li></ul>
+        </li>
+        <li>Zusätzlich soll der Port 80 im Image dokumentiert werden</li>
+      </ul>
+    </li>
+    <li>Bauen Sie das Image mit dem Tag <code>mein-apache</code></li>
+    <li>Starten Sie einen Container daraus mit passendem Port-Mapping und prüfen Sie mit <code>curl</code></li>
+    <li>Löschen Sie den Container, starten Sie einen neuen aus demselben Image und prüfen Sie erneut mit <code>curl</code></li>
+  </ul>
+
+  <details><summary>Tipp</summary>
+    <p>Du brauchst drei Instruktionen: eine für das Basis-Image, eine zum Kopieren, eine zum Dokumentieren des Ports. Das Basis-Image bringt sein <code>CMD</code> schon mit — anders als bei <code>debian</code> musst du hier keines setzen.</p>
+    <p>Der Punkt am Ende von <code>docker build -t name .</code> ist der Build-Context, also das aktuelle Verzeichnis. Den vergisst man gerne.</p>
+    <p>Die letzte Teilaufgabe ist die eigentliche Frage: Überlebt deine Seite das Löschen des Containers? Überleg dir die Antwort, bevor du es ausprobierst.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>mkdir ~/mein-apache &amp;&amp; <span class="c-kw">cd</span> ~/mein-apache
+nano index.html          <span class="c-com"># beliebigen HTML-Inhalt schreiben</span>
+nano Dockerfile
+</code></pre>
+<pre><code><span class="c-kw">FROM</span> httpd:2.4
+
+<span class="c-kw">COPY</span> index.html /usr/local/apache2/htdocs/index.html
+
+<span class="c-kw">EXPOSE</span> 80
+</code></pre>
+<pre><code>sudo docker build -t mein-apache .
+sudo docker run -d --name web -p 9090:80 mein-apache
+curl http://localhost:9090
+
+<span class="c-com"># Beweis, dass die Seite im Image steckt:</span>
+sudo docker rm -f web
+sudo docker run -d --name web -p 9090:80 mein-apache
+curl http://localhost:9090     <span class="c-com"># Seite ist immer noch da</span>
+</code></pre>
+    <p class="key"><b>Die Antwort auf die Frage:</b> Ja, die Seite überlebt. Sie steckt in einem <b>Image-Layer</b>, nicht im Container. Hättest du die Datei stattdessen mit <code>docker exec</code> im laufenden Container editiert, wäre sie beim <code>rm</code> weg gewesen — die läge nämlich im R/W-Layer.</p>
+    <p class="key info"><b><code>EXPOSE</code> öffnet keinen Port.</b> Es ist reine Dokumentation im Image. Erreichbar wird der Port erst durch <code>-p</code> beim Starten.</p>
+  </details>
+</div>
+</section>
+
+<!-- ======================= TEIL 6 ======================= -->
+<section id="t6">
+<h2><span class="num">06</span> Daten und Networking</h2>
+<p class="lead">R/W-Layer, Volumes, Bind Mounts, Netzwerke, Compose.</p>
+
+<!-- A15 -->
+<div class="task">
+  <div class="head"><span class="id">A15</span><h3>Den R/W-Layer untersuchen</h3></div>
+  <ul>
+    <li>Starten Sie einen Container aus dem Image <code>alpine</code> im detached mode mit dem Namen <code>layer-demo</code>, der einen Endlos-Sleep ausführt</li>
+    <li>Führen Sie <code>docker diff</code> aus — die Ausgabe sollte leer sein</li>
+    <li>Erzeugen Sie nacheinander drei verschiedene Deltas im Container:
+      <ul>
+        <li>eine neue Datei anlegen: <code>/tmp/notiz.txt</code></li>
+        <li>eine bestehende Datei ändern: etwas an <code>/etc/hosts</code> anhängen</li>
+        <li>eine bestehende Datei löschen: <code>/etc/motd</code></li>
+      </ul>
+    </li>
+    <li>Führen Sie nach jedem Schritt <code>docker diff</code> aus und beobachten Sie die Präfixe</li>
+    <li>Entfernen Sie den Container, starten Sie einen neuen mit demselben Befehl und führen Sie <code>docker diff</code> erneut aus</li>
+  </ul>
+  <p style="margin-top:14px"><b>Fragen:</b></p>
+  <ul>
+    <li>Welche Ausgabe erwarten Sie beim neuen Container, und warum?</li>
+    <li>Warum erscheint die gelöschte Datei als <code>D</code> und verschwindet nicht einfach?</li>
+  </ul>
+
+  <details><summary>Tipp</summary>
+    <p><code>sleep infinity</code> ans Ende des <code>run</code>-Befehls hängen, damit der Container am Leben bleibt.</p>
+    <p>Einzelne Befehle im Container ausführen geht ohne Shell: <code>docker exec container befehl</code>. Für das Anhängen an eine Datei brauchst du allerdings eine Shell, weil die Umleitung sonst auf dem Host passiert — also <code>sh -c "..."</code>.</p>
+    <p>Die drei Präfixe: <code>A</code> added, <code>C</code> changed, <code>D</code> deleted.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>sudo docker run -d --name layer-demo alpine sleep infinity
+sudo docker diff layer-demo                 <span class="c-com"># leer</span>
+
+sudo docker exec layer-demo touch /tmp/notiz.txt
+sudo docker diff layer-demo                 <span class="c-com"># A /tmp/notiz.txt</span>
+
+sudo docker exec layer-demo sh -c <span class="c-str">'echo "1.2.3.4 test" &gt;&gt; /etc/hosts'</span>
+sudo docker diff layer-demo                 <span class="c-com"># C /etc/hosts</span>
+
+sudo docker exec layer-demo rm /etc/motd
+sudo docker diff layer-demo                 <span class="c-com"># D /etc/motd</span>
+
+sudo docker rm -f layer-demo
+sudo docker run -d --name layer-demo alpine sleep infinity
+sudo docker diff layer-demo                 <span class="c-com"># wieder leer</span>
+</code></pre>
+    <p><b>Antwort 1:</b> Die Ausgabe ist leer. Alle Änderungen lagen im R/W-Layer des alten Containers, und der ist mit ihm gelöscht worden. Der neue Container bekommt eine frische, leere Schicht über denselben unveränderten Image-Layern.</p>
+    <p><b>Antwort 2:</b> Die Datei liegt im <b>schreibgeschützten</b> Image-Layer — dort kann physisch nichts gelöscht werden. Docker notiert die Löschung stattdessen als Eintrag in der R/W-Schicht und blendet die Datei nur aus.</p>
+    <p class="key bad"><b>Warum <code>sh -c</code>?</b> Bei <code>docker exec container echo x &gt;&gt; /etc/hosts</code> wertet deine <b>Host</b>-Shell die Umleitung aus — du würdest in die <code>/etc/hosts</code> der VM schreiben. Mit <code>sh -c "..."</code> passiert alles im Container.</p>
+  </details>
+</div>
+
+<!-- A16 -->
+<div class="task">
+  <div class="head"><span class="id">A16</span><h3>PostgreSQL mit Volume und Bind Mount</h3></div>
+  <p style="font-size:.93rem; color:var(--dim); margin:10px 0 0">Zielsetzung: Die Datenbankdateien sollen in einem Docker Volume liegen, das Init-Skript wird über einen Bind Mount eingebunden.</p>
+  <ul>
+    <li>Erstellen Sie ein Named Volume namens <code>pg-data</code> und listen Sie alle Volumes auf</li>
+    <li>Erstellen Sie einen Ordner auf dem Host mit einer Datei <code>init.sql</code>, die eine Tabelle anlegt und drei Zeilen einfügt</li>
+    <li>Starten Sie <code>postgres:17</code> mit zwei Volume-Flags:
+      <ul>
+        <li>das Named Volume für die Datenbankdateien (Pfad steht im README des Images auf Docker Hub)</li>
+        <li>einen Bind Mount auf Ihren Ordner mit dem Skript</li>
+      </ul>
+    </li>
+    <li>Das Image braucht zusätzlich die Umgebungsvariable <code>POSTGRES_PASSWORD</code> — nutzen Sie dafür das Flag <code>-e</code></li>
+    <li>Laden Sie die Daten mit <code>psql</code> und prüfen Sie mit einer Abfrage, dass sie da sind</li>
+    <li>Löschen Sie den Container, starten Sie einen neuen mit denselben Mounts und prüfen Sie erneut</li>
+  </ul>
+
+  <details><summary>Tipp</summary>
+    <p>Der Datenpfad von Postgres ist <code>/var/lib/postgresql/data</code>.</p>
+    <p>Named Volume und Bind Mount benutzen dasselbe Flag <code>-v</code>, unterscheiden sich aber links vom Doppelpunkt: ein <b>Name</b> → Volume, ein <b>Pfad</b> → Bind Mount.</p>
+    <p>Postgres braucht ein paar Sekunden zum Hochfahren. Wenn <code>psql</code> meckert, kurz warten und nochmal.</p>
+    <p>Ein Befehl in psql ohne interaktive Sitzung: <code>psql -U postgres -c "SELECT ..."</code>.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>sudo docker volume create pg-data
+sudo docker volume ls
+
+mkdir ~/pg-init
+nano ~/pg-init/init.sql
+</code></pre>
+<pre><code><span class="c-kw">CREATE TABLE</span> kurse (id <span class="c-kw">INT</span>, name <span class="c-kw">TEXT</span>);
+<span class="c-kw">INSERT INTO</span> kurse <span class="c-kw">VALUES</span> (1,<span class="c-str">'INSY'</span>), (2,<span class="c-str">'EidI'</span>), (3,<span class="c-str">'MGLI'</span>);
+</code></pre>
+<pre><code>sudo docker run -d --name pg \
+  -e POSTGRES_PASSWORD=geheim \
+  -v pg-data:/var/lib/postgresql/data \
+  -v ~/pg-init:/initscripts \
+  postgres:17
+
+<span class="c-com"># kurz warten, dann Daten laden</span>
+sudo docker exec -it pg psql -U postgres -f /initscripts/init.sql
+sudo docker exec -it pg psql -U postgres -c <span class="c-str">"SELECT * FROM kurse;"</span>
+
+<span class="c-com"># Container weg, neuer Container, gleiche Mounts</span>
+sudo docker rm -f pg
+sudo docker run -d --name pg \
+  -e POSTGRES_PASSWORD=geheim \
+  -v pg-data:/var/lib/postgresql/data \
+  -v ~/pg-init:/initscripts \
+  postgres:17
+
+sudo docker exec -it pg psql -U postgres -c <span class="c-str">"SELECT * FROM kurse;"</span>
+<span class="c-com"># → die drei Zeilen sind noch da</span>
+</code></pre>
+    <p class="key"><b>Warum es funktioniert:</b> Die Datenbankdateien lagen nie im Container, sondern im Volume <code>pg-data</code>. Das gehört Docker, nicht dem Container — und überlebt ihn deshalb.</p>
+    <p class="key bad"><b>Aufräumen mit Vorsicht:</b> <code>docker rm pg</code> lässt das Volume stehen. Erst <code>docker volume rm pg-data</code> oder <code>docker system prune --volumes</code> löscht die Daten wirklich.</p>
+  </details>
+</div>
+
+<!-- A17 -->
+<div class="task">
+  <div class="head"><span class="id">A17</span><h3>Zwei getrennte Netzwerke</h3></div>
+  <ul>
+    <li>Erstellen Sie zwei Custom Bridge Networks namens <code>shop_app_net</code> und <code>shop_db_net</code></li>
+    <li>Inspizieren Sie beide Netzwerke und notieren Sie die jeweiligen Subnetze</li>
+    <li>Starten Sie zwei Container im <code>shop_app_net</code>: <code>shop_app1</code> und <code>shop_app2</code>, Image <code>busybox</code>, Befehl <code>sleep infinity</code></li>
+    <li>Starten Sie zwei Container im <code>shop_db_net</code>: <code>shop_db1</code> und <code>shop_db2</code>, gleiches Image und gleicher Befehl</li>
+    <li>Prüfen Sie die Erreichbarkeit innerhalb jedes Netzwerks mit <code>ping -c 3</code></li>
+    <li>Prüfen Sie die Isolation zwischen den Netzwerken</li>
+    <li>Inspizieren Sie beide Netzwerke erneut und prüfen Sie, dass jeweils nur die eigenen Container im <code>Containers</code>-Abschnitt stehen</li>
+  </ul>
+  <p style="margin-top:14px"><b>Zusatzfrage:</b> Was fällt Ihnen an den IP-Adressen der vier Container auf?</p>
+
+  <details><summary>Tipp</summary>
+    <p>Beim <code>run</code>-Befehl bestimmt das Flag <code>--network</code>, in welchem Netz der Container landet.</p>
+    <p>Die Fehlermeldung beim netzübergreifenden Ping ist aufschlussreich — lies sie genau. Sie sagt nicht „keine Antwort".</p>
+    <p>Bei <code>docker network inspect</code> sind zwei Abschnitte interessant: <code>Containers</code> und <code>IPAM</code> → <code>Config</code> → <code>Subnet</code>.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>sudo docker network create shop_app_net
+sudo docker network create shop_db_net
+sudo docker network inspect shop_app_net
+
+sudo docker run -d --name shop_app1 --network shop_app_net busybox sleep infinity
+sudo docker run -d --name shop_app2 --network shop_app_net busybox sleep infinity
+sudo docker run -d --name shop_db1  --network shop_db_net  busybox sleep infinity
+sudo docker run -d --name shop_db2  --network shop_db_net  busybox sleep infinity
+
+sudo docker exec -it shop_app1 ping -c 3 shop_app2    <span class="c-com"># geht</span>
+sudo docker exec -it shop_db1  ping -c 3 shop_db2     <span class="c-com"># geht</span>
+sudo docker exec -it shop_app1 ping -c 3 shop_db1     <span class="c-com"># bad address</span>
+
+sudo docker network inspect shop_app_net
+sudo docker network inspect shop_db_net
+</code></pre>
+    <p><b>Zur Zusatzfrage:</b> Beide Netze vergeben <code>.0.2</code> und <code>.0.3</code> — es gibt also zweimal dieselbe Endung auf einer Maschine. Kein Konflikt, weil die Subnetze verschieden sind (z.&nbsp;B. <code>172.18.0.0/16</code> und <code>172.19.0.0/16</code>) und keine Route dazwischen existiert.</p>
+    <p class="key info"><b>Warum <code>bad address</code> und nicht „timeout":</b> Docker betreibt pro Netz einen kleinen DNS. Der kennt nur die Container des eigenen Netzes. Für <code>shop_app1</code> existiert der Name <code>shop_db1</code> gar nicht — es scheitert schon an der Namensauflösung, nicht erst am Paket.</p>
+  </details>
+</div>
+
+<!-- A18 -->
+<div class="task">
+  <div class="head"><span class="id">A18</span><h3>Dasselbe mit Compose</h3><span class="file">docker-compose.yml</span></div>
+  <ul>
+    <li>Räumen Sie zuerst die Container und Netze aus A17 auf</li>
+    <li>Erstellen Sie ein neues leeres Verzeichnis für Ihre <code>docker-compose.yml</code></li>
+    <li>Bilden Sie das Setup aus A17 mit Docker Compose nach:
+      <ul>
+        <li>zwei Container <code>shop_app1</code> und <code>shop_app2</code> im Netzwerk <code>shop_app_net</code></li>
+        <li>zwei Container <code>shop_db1</code> und <code>shop_db2</code> im Netzwerk <code>shop_db_net</code></li>
+      </ul>
+    </li>
+    <li>Prüfen Sie die Datei vor dem Start mit <code>docker compose config</code></li>
+    <li>Starten Sie alles mit einem Befehl und wiederholen Sie die Ping-Tests aus A17</li>
+    <li>Räumen Sie mit einem Befehl wieder auf</li>
+  </ul>
+  <p style="margin-top:14px"><b>Frage:</b> Vergleichen Sie <code>docker network ls</code> mit den Namen aus Ihrer YAML-Datei. Was fällt auf, und warum macht Compose das?</p>
+
+  <details><summary>Tipp</summary>
+    <p>Eine Compose-Datei hat zwei Hauptteile auf oberster Ebene: <code>services:</code> und <code>networks:</code>.</p>
+    <p>Jeder Service braucht vier Angaben: <code>image</code>, <code>container_name</code>, <code>command</code> und <code>networks</code>. Die vier Blöcke sind bis auf Name und Netz identisch.</p>
+    <p>Die Wörter links vom Doppelpunkt sind feste Schlüsselwörter — nur die Werte rechts davon setzt du selber.</p>
+    <p>YAML kennt <b>keine Tabs</b>. Zwei Leerzeichen pro Ebene, und die Einrückung ist die Struktur.</p>
+    <p>Ein Netz, das du unter einem Service nennst, muss auch im unteren <code>networks:</code>-Block stehen — sonst <code>refers to undefined network</code>.</p>
+  </details>
+
+  <details class="sol"><summary>Lösung</summary>
+<pre><code>sudo docker rm -f shop_app1 shop_app2 shop_db1 shop_db2
+sudo docker network rm shop_app_net shop_db_net
+
+mkdir ~/shop-compose &amp;&amp; <span class="c-kw">cd</span> ~/shop-compose
+nano docker-compose.yml
+</code></pre>
+<pre><code><span class="c-kw">services:</span>
+  shop_app1:
+    image: busybox
+    container_name: shop_app1
+    command: sleep infinity
+    networks:
+      - shop_app_net
+
+  shop_app2:
+    image: busybox
+    container_name: shop_app2
+    command: sleep infinity
+    networks:
+      - shop_app_net
+
+  shop_db1:
+    image: busybox
+    container_name: shop_db1
+    command: sleep infinity
+    networks:
+      - shop_db_net
+
+  shop_db2:
+    image: busybox
+    container_name: shop_db2
+    command: sleep infinity
+    networks:
+      - shop_db_net
+
+<span class="c-kw">networks:</span>
+  shop_app_net:
+  shop_db_net:
+</code></pre>
+<pre><code>sudo docker compose config          <span class="c-com"># prüfen</span>
+sudo docker compose up -d           <span class="c-com"># starten</span>
+sudo docker ps
+sudo docker network ls
+
+sudo docker exec -it shop_app1 ping -c 3 shop_app2    <span class="c-com"># geht</span>
+sudo docker exec -it shop_app1 ping -c 3 shop_db1     <span class="c-com"># geht nicht</span>
+
+sudo docker compose down            <span class="c-com"># alles weg</span>
+</code></pre>
+    <p><b>Zur Frage:</b> Die Netze heissen <code>shop-compose_shop_app_net</code> statt nur <code>shop_app_net</code>. Compose nimmt den <b>Ordnernamen</b> als Projektnamen und hängt ihn vorne an alles, was es anlegt. So können zwei Projekte beide ein Netz namens <code>backend</code> haben, ohne sich zu stören. Die Container behalten ihren Namen, weil <code>container_name:</code> gesetzt ist.</p>
+    <p class="key"><b>Der Gewinn:</b> In A17 waren es zehn Befehle zum Aufbauen und sechs zum Abräumen. Hier ist es eine Datei und zwei Befehle — und die Datei kannst du versionieren, weitergeben und morgen wieder genauso starten. Das ist der Unterschied zwischen imperativ und deklarativ.</p>
+  </details>
+</div>
+</section>
+
+<footer>
+  INSY SW10 · Übungsblatt · 18 Aufgaben mit Tipps und Lösungen
+</footer>
+</div>
+</body>
+</html>
